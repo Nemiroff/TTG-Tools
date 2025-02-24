@@ -909,6 +909,7 @@ namespace TTG_Tools
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!edited) return;
             Methods.DeleteCurrentFile(ofd.FileName);
 
             FileStream fs = new FileStream(ofd.FileName, FileMode.OpenOrCreate);
@@ -916,7 +917,7 @@ namespace TTG_Tools
             fs.Close();
 
             encFunc(ofd.FileName);
-
+            fillTableofCoordinates(font, false);
             edited = false; //After saving return trigger to FALSE
         }
 
@@ -1053,14 +1054,14 @@ namespace TTG_Tools
                     bw.Write(font.glyph.charsNew[i].TexNum);
                     bw.Write(font.glyph.charsNew[i].Channel);
 
-                    font.glyph.charsNew[i].XStart /= font.NewTex[font.glyph.charsNew[i].TexNum].Width;
-                    bw.Write(font.glyph.charsNew[i].XStart);
-                    font.glyph.charsNew[i].XEnd /= font.NewTex[font.glyph.charsNew[i].TexNum].Width;
-                    bw.Write(font.glyph.charsNew[i].XEnd);
-                    font.glyph.charsNew[i].YStart /= font.NewTex[font.glyph.charsNew[i].TexNum].Height;
-                    bw.Write(font.glyph.charsNew[i].YStart);
-                    font.glyph.charsNew[i].YEnd /= font.NewTex[font.glyph.charsNew[i].TexNum].Height;
-                    bw.Write(font.glyph.charsNew[i].YEnd);
+                    var xSt = font.glyph.charsNew[i].XStart / font.NewTex[font.glyph.charsNew[i].TexNum].Width;
+                    bw.Write(xSt);
+                    var xEn = font.glyph.charsNew[i].XEnd / font.NewTex[font.glyph.charsNew[i].TexNum].Width;
+                    bw.Write(xEn);
+                    var ySt = font.glyph.charsNew[i].YStart / font.NewTex[font.glyph.charsNew[i].TexNum].Height;
+                    bw.Write(ySt);
+                    var yEn = font.glyph.charsNew[i].YEnd / font.NewTex[font.glyph.charsNew[i].TexNum].Height;
+                    bw.Write(yEn);
 
                     bw.Write(font.glyph.charsNew[i].CharWidth);
                     bw.Write(font.glyph.charsNew[i].CharHeight);
@@ -1668,24 +1669,20 @@ namespace TTG_Tools
                                     case "lineheight":
                                         font.BaseSize = Convert.ToSingle(splitted[k + 1]);
 
-                                        if ((font.One == 0x31 && (Encoding.ASCII.GetString(check_header) == "5VSM"))
-                                            || (Encoding.ASCII.GetString(check_header) == "6VSM"))
-                                        {
-                                            font.NewSomeValue = Convert.ToSingle(splitted[k + 1]);
-                                        }
                                         if(Encoding.ASCII.GetString(check_header) == "5VSM" && font.hasLineHeight)
                                         {
                                             font.lineHeight = Convert.ToSingle(splitted[k + 1]);
                                         }
-                                            break;
+                                        break;
 
                                     case "base":
                                         if ((font.One == 0x31 && (Encoding.ASCII.GetString(check_header) == "5VSM"))
                                             || (Encoding.ASCII.GetString(check_header) == "6VSM"))
                                         {
-                                            font.BaseSize = Convert.ToSingle(splitted[k + 1]);
+                                            font.NewSomeValue = Convert.ToSingle(splitted[k + 1]);
                                         }
-                                            break;
+                                        else font.BaseSize = Convert.ToSingle(splitted[k + 1]);
+                                        break;
 
                                     case "pages":
                                         tmpNewTex = new TextureClass.NewT3Texture[Convert.ToInt32(splitted[k + 1])];
