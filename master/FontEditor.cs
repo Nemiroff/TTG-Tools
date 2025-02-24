@@ -1386,27 +1386,36 @@ namespace TTG_Tools
         {
             int end_edit_column = e.ColumnIndex;
             int end_edit_row = e.RowIndex;
+            bool success = false;
             if (old_data != "")
             {
                 if ((end_edit_column >= 2 && end_edit_column <= dataGridViewWithCoord.ColumnCount) && Methods.IsNumeric(dataGridViewWithCoord[end_edit_column, end_edit_row].Value.ToString()))
                 {
                     if (dataGridViewWithCoord[end_edit_column, end_edit_row].Value.ToString() != old_data)
                     {
-                        if (end_edit_column == 2 || end_edit_column == 3)
+                        if (end_edit_column == 2 || end_edit_column == 3) //X
                         {
                             dataGridViewWithCoord[7, end_edit_row].Value = (Convert.ToInt32(dataGridViewWithCoord[3, end_edit_row].Value) - Convert.ToInt32(dataGridViewWithCoord[2, end_edit_row].Value));
+                            success = true;
+
                         }
-                        else if (end_edit_column == 4 || end_edit_column >= 5)
+                        else if (end_edit_column == 4 || end_edit_column == 5) //Y
                         {
                             dataGridViewWithCoord[8, end_edit_row].Value = (Convert.ToInt32(dataGridViewWithCoord[5, end_edit_row].Value) - Convert.ToInt32(dataGridViewWithCoord[4, end_edit_row].Value));
+                            success = true;
                         }
-                        else if (end_edit_column == 6)
+                        else if (end_edit_column == 6) //dds
                         {
-                            int temp = Convert.ToInt32(dataGridViewWithCoord[end_edit_column, end_edit_row].Value);
-                            /*if (temp >= ffs.dds.Count)
+                            success = true;
+                            if (Convert.ToInt32(dataGridViewWithCoord[end_edit_column, end_edit_row].Value) >= dataGridViewWithTextures.RowCount)
                             {
                                 dataGridViewWithCoord[end_edit_column, end_edit_row].Value = old_data;
-                            }*/
+                                success = false;
+                            }
+                        }
+                        else if (end_edit_column > 6 && end_edit_column < 8)
+                        {
+                            dataGridViewWithCoord[end_edit_column, end_edit_row].Value = old_data;
                         }
                     }
                 }
@@ -1415,6 +1424,41 @@ namespace TTG_Tools
                     dataGridViewWithCoord[end_edit_column, end_edit_row].Value = old_data;
                 }
             }
+            if(success)
+            {
+                dataGridViewWithCoord[end_edit_column,end_edit_row].Style.BackColor = Color.DarkCyan;
+                if (!font.NewFormat) {
+                    float.TryParse(dataGridViewWithCoord[2, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].XStart);
+                    float.TryParse(dataGridViewWithCoord[3, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].XEnd);
+                    float.TryParse(dataGridViewWithCoord[4, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].YStart);
+                    float.TryParse(dataGridViewWithCoord[5, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].YEnd);
+                    int.TryParse(dataGridViewWithCoord[6, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].TexNum);
+
+                    if (font.hasScaleValue)
+                    {
+                        float.TryParse(dataGridViewWithCoord[7, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].CharWidth);
+                        float.TryParse(dataGridViewWithCoord[8, end_edit_row].Value.ToString(), out font.glyph.chars[end_edit_row].CharHeight);
+                    }
+                }
+                else
+                {
+                   
+                    float.TryParse(dataGridViewWithCoord[4, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].YStart);
+                    float.TryParse(dataGridViewWithCoord[5, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].YEnd);
+                    int.TryParse(dataGridViewWithCoord[6, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].TexNum);
+                    float.TryParse(dataGridViewWithCoord[7, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].CharWidth);
+                    float.TryParse(dataGridViewWithCoord[8, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].CharHeight);
+                    float.TryParse(dataGridViewWithCoord[9, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].XOffset);
+                    float.TryParse(dataGridViewWithCoord[10, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].YOffset);
+                    float.TryParse(dataGridViewWithCoord[11, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].XAdvance);
+                    int.TryParse(dataGridViewWithCoord[12, end_edit_row].Value.ToString(), out font.glyph.charsNew[end_edit_row].Channel);
+                }
+            }
+            if (!edited && success)
+            {
+                edited = success;
+            }
+
         }
         public static string old_data;
 
@@ -1684,7 +1728,7 @@ namespace TTG_Tools
 
                                         if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + Path.DirectorySeparatorChar + fileName))
                                         {
-                                            ReplaceTexture(fi.DirectoryName + Path.DirectorySeparatorChar + splitted[k + 1], tmpNewTex[idNum]);
+                                            ReplaceTexture(fi.DirectoryName + Path.DirectorySeparatorChar + fileName, tmpNewTex[idNum]);
                                         }
                                         break;
                                 }
