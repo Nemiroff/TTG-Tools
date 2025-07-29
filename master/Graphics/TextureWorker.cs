@@ -19,7 +19,7 @@ namespace TTG_Tools.Graphics
             BinaryReader br = new BinaryReader(stream);
             try
             {
-                dds.header head;
+                Dds.Header head;
                 byte[] tmp = br.ReadBytes(4);
                 head.head = Encoding.ASCII.GetString(tmp);
                 head.Size = br.ReadUInt32();
@@ -29,11 +29,12 @@ namespace TTG_Tools.Graphics
                 head.PitchOrLinearSize = br.ReadUInt32();
                 head.Depth = br.ReadUInt32();
                 head.MipMapCount = br.ReadUInt32();
-                head.Reserved1 = new uint[11];
+                head.AlphaBitDepth = br.ReadUInt32();
+                head.Reserved = new uint[10];
 
-                for (int i = 0; i < 11; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    head.Reserved1[i] = br.ReadUInt32();
+                    head.Reserved[i] = br.ReadUInt32();
                 }
 
                 head.PF.Size = br.ReadUInt32();
@@ -46,22 +47,21 @@ namespace TTG_Tools.Graphics
                 head.PF.BBitMask = br.ReadUInt32();
                 head.PF.ABitMask = br.ReadUInt32();
 
-                head.Caps = br.ReadUInt32();
+                head.Caps1 = br.ReadUInt32();
                 head.Caps2 = br.ReadUInt32();
                 head.Caps3 = br.ReadUInt32();
                 head.Caps4 = br.ReadUInt32();
-                head.Reserved2 = br.ReadUInt32();
+                head.TextureStage = br.ReadUInt32();
 
                 width = (int)head.Width;
                 height = (int)head.Height;
                 mip = head.MipMapCount < 1 ? 1 : (int)head.MipMapCount;
 
-                Flags flags = new Flags();
                 bool isDX10 = false;
 
                 if (newFormat)
                 {
-                    if ((ushort)(head.PF.Flags & flags.DDPF_RGB) == flags.DDPF_RGB)
+                    if ((ushort)(head.PF.Flags & Flags.DDPF_RGB) == Flags.DDPF_RGB)
                     {
                         switch (head.PF.RgbBitCount) {
                             case 16:
@@ -73,7 +73,7 @@ namespace TTG_Tools.Graphics
                                 break;
                     }
                     }
-                    else if((ushort)(head.PF.Flags & flags.DDPF_LUMINANCE) == flags.DDPF_LUMINANCE)
+                    else if((ushort)(head.PF.Flags & Flags.DDPF_LUMINANCE) == Flags.DDPF_LUMINANCE)
                     {
                         if (head.PF.RgbBitCount == 16) textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.IL8;
                     }
@@ -120,53 +120,53 @@ namespace TTG_Tools.Graphics
 
                             switch (Format)
                             {
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB8;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB4;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_A8_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_A8_UNORM:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.A8;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC1_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC1_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC1;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC2_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC2_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC2;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC3_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC3_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC3;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC4_SNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC4_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC4_SNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC4_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC4;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC5_SNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC5_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC5_SNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC5_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC5;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC6H_SF16:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC6H_UF16:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC6H_SF16:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC6H_UF16:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC6;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC7_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC7_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC7;
                                     break;
                             }
@@ -180,7 +180,7 @@ namespace TTG_Tools.Graphics
                 }
                 else
                 {
-                    if ((uint)(head.PF.Flags & flags.DDPF_RGB) == flags.DDPF_RGB)
+                    if ((uint)(head.PF.Flags & Flags.DDPF_RGB) == Flags.DDPF_RGB)
                     {
                         switch (head.PF.RgbBitCount) {
                             case 32:
@@ -192,11 +192,11 @@ namespace TTG_Tools.Graphics
                     {
                         textureFormat = (uint)ClassesStructs.TextureClass.OldTextureFormat.DX_L8;
                     }
-                    else if (((uint)(head.PF.Flags & flags.DDPF_LUMINANCE) == flags.DDPF_LUMINANCE) || ((uint)(head.PF.Flags & flags.DDPF_ALPHA) == flags.DDPF_ALPHA))
+                    else if (((uint)(head.PF.Flags & Flags.DDPF_LUMINANCE) == Flags.DDPF_LUMINANCE) || ((uint)(head.PF.Flags & Flags.DDPF_ALPHA) == Flags.DDPF_ALPHA))
                     {
                         textureFormat = (uint)ClassesStructs.TextureClass.OldTextureFormat.DX_L8;
                     }
-                    else if((uint)(head.PF.Flags & flags.DDPF_FOURCC) == flags.DDPF_FOURCC)
+                    else if((uint)(head.PF.Flags & Flags.DDPF_FOURCC) == Flags.DDPF_FOURCC)
                     {
                         switch (head.PF.FourCC)
                         {
@@ -342,7 +342,7 @@ namespace TTG_Tools.Graphics
             BinaryWriter bw = new BinaryWriter(ms);
             try
             {
-                dds.header head;
+                Dds.Header head;
                 head.head = "DDS ";
                 byte[] tmp = Encoding.ASCII.GetBytes(head.head);
                 bw.Write(tmp);
@@ -351,11 +351,10 @@ namespace TTG_Tools.Graphics
                 bw.Write(head.Size);
 
                 head.Flags = 0;
-                Flags flags = new Flags();
-                head.Flags = flags.DDSD_WIDTH | flags.DDSD_HEIGHT | flags.DDSD_PIXELFORMAT | flags.DDSD_CAPS;
-                head.Flags |= Format < 0x40 ? flags.DDSD_PITCH : flags.DDSD_LINEARSIZE;
+                head.Flags = Flags.DDSD_WIDTH | Flags.DDSD_HEIGHT | Flags.DDSD_PIXELFORMAT | Flags.DDSD_CAPS;
+                head.Flags |= Format < 0x40 ? Flags.DDSD_PITCH : Flags.DDSD_LINEARSIZE;
 
-                if (MipCount > 1) head.Flags |= flags.DDSD_MIPMAPCOUNT;
+                if (MipCount > 1) head.Flags |= Flags.DDSD_MIPMAPCOUNT;
 
                 bw.Write(head.Flags);
 
@@ -381,30 +380,33 @@ namespace TTG_Tools.Graphics
                 head.MipMapCount = (uint)MipCount;
                 bw.Write(head.MipMapCount);
 
-                head.Reserved1 = new uint[11];
+                head.AlphaBitDepth = 0;
+                bw.Write(head.AlphaBitDepth);
 
-                for(int i = 0; i < 11; i++)
+                head.Reserved = new uint[10];
+
+                for(int i = 0; i < 10; i++)
                 {
-                    bw.Write(head.Reserved1[i]);
+                    bw.Write(head.Reserved[i]);
                 }
 
                 head.PF.Size = 32;
                 bw.Write(head.PF.Size);
 
-                head.PF.Flags = (Format >= 0x40 || Format == 0x25) ? flags.DDPF_FOURCC : flags.DDPF_RGB;
+                head.PF.Flags = (Format >= 0x40 || Format == 0x25) ? Flags.DDPF_FOURCC : Flags.DDPF_RGB;
                 
                 switch (Format)
                 {
                     case 0x00:
-                        head.PF.Flags = flags.DDPF_RGB | flags.DDPF_ALPHAPIXELS;
+                        head.PF.Flags = Flags.DDPF_RGB | Flags.DDPF_ALPHAPIXELS;
                         break;
 
                     case 0x10:
-                        head.PF.Flags = flags.DDPF_ALPHA;
+                        head.PF.Flags = Flags.DDPF_ALPHA;
                         break;
 
                     case 0x11:
-                        head.PF.Flags = flags.DDPF_LUMINANCE;
+                        head.PF.Flags = Flags.DDPF_LUMINANCE;
                         break;
                 }
 
@@ -507,71 +509,71 @@ namespace TTG_Tools.Graphics
 
                 Caps caps = new Caps();
 
-                head.Caps = caps.DDSCAPS_TEXTURE;
+                head.Caps1 = caps.DDSCAPS_TEXTURE;
                 head.Caps2 = 0;
                 head.Caps3 = 0;
                 head.Caps4 = 0;
-                head.Reserved2 = 0;
+                head.TextureStage = 0;
 
-                if (MipCount > 1) head.Caps |= caps.DDSCAPS_COMPLEX | caps.DDSCAPS_MIPMAP;
+                if (MipCount > 1) head.Caps1 |= caps.DDSCAPS_COMPLEX | caps.DDSCAPS_MIPMAP;
 
                 //Need find out how caps2 value works
                 head.Caps2 = caps.DDSCAPS2_CUBEMAP_POSITIVEY;
 
-                bw.Write(head.Caps);
+                bw.Write(head.Caps1);
                 bw.Write(head.Caps2);
                 bw.Write(head.Caps3);
                 bw.Write(head.Caps4);
-                bw.Write(head.Reserved2);
+                bw.Write(head.TextureStage);
 
                 if(head.PF.FourCC == "DX10")
                 {
-                    head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_UNKNOWN;
+                    head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_UNKNOWN;
 
                     switch (Format)
                     {
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB8:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB4:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.A8:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_A8_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_A8_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC1:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC2:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC3:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC4:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC5:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC6:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC7:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM;
                             break;
                     }
 
-                    head.headDX11.ResourceDimension = dds.D3D10ResourceDimension.D3D10_RESOURCE_DIMENSION_TEXTURE2D;
+                    head.headDX11.ResourceDimension = Dds.D3D10ResourceDimension.D3D10_RESOURCE_DIMENSION_TEXTURE2D;
                     head.headDX11.MiscFlag = 0;
                     head.headDX11.MiscFlag2 = 0;
                     head.headDX11.ArraySize = (uint)ArrayMember;

@@ -136,6 +136,7 @@
             this.MaximizeBox = false;
             this.Name = "MainMenu";
             this.Text = "TTG Tools by Den Em";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainMenu_FormClosed);
             this.Load += new System.EventHandler(this.MainMenu_Load);
             this.Resize += new System.EventHandler(this.MainMenu_Resize);
             this.ResumeLayout(false);

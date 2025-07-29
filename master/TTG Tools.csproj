@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TTG_Tools</RootNamespace>
     <AssemblyName>TTG Tools</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>ttgtool.ico</ApplicationIcon>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -62,6 +62,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cyotek.Windows.Forms.ImageBox, Version=1.2.0.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
+      <HintPath>packages\CyotekImageBox.1.3.1\lib\net20\Cyotek.Windows.Forms.ImageBox.dll</HintPath>
+    </Reference>
     <Reference Include="Joveler.ZLibWrapper, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Joveler.ZLibWrapper.1.3.1\lib\net45\Joveler.ZLibWrapper.dll</HintPath>
     </Reference>
@@ -118,7 +121,7 @@
     <Compile Include="ClassesStructs\FontClass.cs" />
     <Compile Include="ClassesStructs\TextureClass.cs" />
     <Compile Include="Graphics\DDS\Caps.cs" />
-    <Compile Include="Graphics\DDS\dds.cs" />
+    <Compile Include="Graphics\DDS\Dds.cs" />
     <Compile Include="Graphics\DDS\Decompress.cs" />
     <Compile Include="Graphics\DDS\Flags.cs" />
     <Compile Include="Graphics\DDS\SomeActions.cs" />
@@ -260,6 +263,7 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

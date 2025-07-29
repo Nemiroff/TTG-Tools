@@ -5,9 +5,11 @@
  * https://docs.microsoft.com/en-us/windows/win32/api/dxgiformat/ne-dxgiformat-dxgi_format       *
  *************************************************************************************************/
 
+using System.Runtime.InteropServices;
+
 namespace TTG_Tools.Graphics.DDS
 {
-    public static class dds
+    public static class Dds
     {
         public struct PixelFormat
         {
@@ -21,7 +23,7 @@ namespace TTG_Tools.Graphics.DDS
             public uint ABitMask;
         }
 
-        public struct header
+        public struct Header
         {
             public string head;
             public uint Size;
@@ -31,15 +33,16 @@ namespace TTG_Tools.Graphics.DDS
             public uint PitchOrLinearSize;
             public uint Depth;
             public uint MipMapCount;
-            public uint[] Reserved1; //11 elements
+            public uint AlphaBitDepth;
+            public uint[] Reserved; //11 elements
             public PixelFormat PF;
-            public uint Caps;
+            public uint Caps1;
             public uint Caps2;
             public uint Caps3;
             public uint Caps4;
-            public uint Reserved2;
+            public uint TextureStage;
 
-            public header_DX11 headDX11;
+            public Header_DX11 headDX11;
         }
 
         public enum DxgiFormat
@@ -177,13 +180,30 @@ namespace TTG_Tools.Graphics.DDS
             D3D10_RESOURCE_DIMENSION_TEXTURE3D
         }
 
-        public struct header_DX11
+        public struct Header_DX11
         {
             public DxgiFormat DF;
             public D3D10ResourceDimension ResourceDimension;
             public uint MiscFlag;
             public uint ArraySize;
             public uint MiscFlag2;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Colour8888
+        {
+            public byte red;
+            public byte green;
+            public byte blue;
+            public byte alpha;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct Colour565
+        {
+            public ushort blue; //: 5;
+            public ushort green; //: 6;
+            public ushort red; //: 5;
         }
     }
 }

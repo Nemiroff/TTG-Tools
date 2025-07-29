@@ -138,13 +138,33 @@ Special thanks to:
 - daemon1 and tge for PS4 swizzle algorithm
 - Josh Tamely for oodle wrapper
 - Hajin Jang for Zlib.Wrapper
+- Nemiroff thanks for fixing a bug in the Font Editor.
 
 List of supported games:
-Telltale's Texas Hold Em, Tales of Monkey Island, Sam &amp; Max: Season One, Sam &amp; Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam &amp; Max: The Devil's Playhouse, Puzzle Agent, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones, Minecraft: Story Mode (Seasons one and two), Walking Dead: Michonne, Batman (Seasons one and two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered, Sam &amp; Max The Devil's Playhouse Remastered.
+Telltale's Texas Hold Em, Tales of Monkey Island, Sam &amp; Max: Season One, Sam &amp; Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam &amp; Max: The Devil's Playhouse, Puzzle Agent 1, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, The Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones - A Telltale Games Series, Minecraft: Story Mode (Seasons One and Two), The Walking Dead: Michonne, Batman (Seasons One and Two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered, Sam &amp; Max The Devil's Playhouse Remastered.
 Maybe some games doesn't work.
 
 ===
 [Version history]
+
+v.1.14.8 (19.07.2025)
++ TTG Tools:
+Fixed the names of the games
++ Font editor:
+Removed russian messages.
+
+v.1.14.7 (05.07.2025)
++ Auto(De)Packer (Packer and Unpacker)
+Fixed an encoding bug where Latin characters were showing up as "?" in Back To The Future: The Game on Xbox 360 and PS4.
++ Font editor:
+Added Nemiroff's fixes to the official TTG Tools build.
++ TTG Tools:
+Removed russian messages.
+
+v.1.14.6 (24.02.2025)
++ Font editor:
+Nemiroff fixed some critical bugs in the Font Editor. (Many thanks!)
+
 v.1.14.5 (05.01.2025)
 + Auto(De)Packer
 Minor fixes import text files.
@@ -193,7 +213,7 @@ Add first version of archive unpacker
 
 v.1.13.2 (14.08.2024)
 +TTG Tools:
-Add support Sam &amp; Max The Devil's Playhouse remastered
+Add support Sam &amp; Max The Devil's Playhouse Remastered
 
 v.1.13.1 (02.09.2023)
 + TTG Tools:
@@ -288,7 +308,7 @@ v1.0.3 (14.12.19)
 + TTG Tools
 Minor update
 - Auto(De)Packer:
-Removed support newer games (WD season 4 and WD Definitive Series). This tool won't support
+Removed support newer games (TWD season 4 and TWD Definitive Series). This tool won't support
 anymore newest games.
 
 v.1.0.2 (03.12.19)

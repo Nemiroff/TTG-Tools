@@ -856,13 +856,13 @@ namespace TTG_Tools
             return -1;
         }
 
-        public static ClassesStructs.Text.CommonTextClass SortString(ClassesStructs.Text.CommonTextClass text)
+        public static CommonTextClass SortString(CommonTextClass text)
         {
             string firstStr = "", secondStr = "";
-            ClassesStructs.Text.CommonTextClass newText = new ClassesStructs.Text.CommonTextClass();
-            newText.txtList = new System.Collections.Generic.List<ClassesStructs.Text.CommonText>();
+            CommonTextClass newText = new CommonTextClass();
+            newText.txtList = new List<CommonText>();
 
-            ClassesStructs.Text.CommonText tmpTxt;
+            CommonText tmpTxt;
 
             for (int i = 0; i < text.txtList.Count; i++)
             {

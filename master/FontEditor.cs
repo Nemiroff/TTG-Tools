@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
+using TTG_Tools.Graphics.DDS;
 using TTG_Tools.Graphics.Swizzles;
 
 namespace TTG_Tools
@@ -324,39 +325,39 @@ namespace TTG_Tools
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-                ofd.Filter = "Font files (*.font)|*.font";
-                ofd.RestoreDirectory = true;
-                ofd.Title = "Open font file";
-                ofd.DereferenceLinks = false;
-                byte[] binContent = new byte[0];
-                string FileName = "";
+            ofd.Filter = "Font files (*.font)|*.font";
+            ofd.RestoreDirectory = true;
+            ofd.Title = "Open font file";
+            ofd.DereferenceLinks = false;
+            byte[] binContent = new byte[0];
+            string FileName = "";
 
-                if (ofd.ShowDialog() == DialogResult.OK)
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                encrypted = false;
+                bool read = false;
+
+                FileStream fs;
+                try
                 {
-                    encrypted = false;
-                    bool read = false;
-
-                    FileStream fs;
-                    try
-                    {
-                        FileName = ofd.FileName;
-                        fs = new FileStream(ofd.FileName, FileMode.Open);
-                        binContent = Methods.ReadFull(fs);
-                        fs.Close();
-                        read = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Error!");
-                        saveToolStripMenuItem.Enabled = false;
-                        saveAsToolStripMenuItem.Enabled = false;
-                        exportCoordinatesToolStripMenuItem1.Enabled = false;
-                        Form.ActiveForm.Text = "Font Editor";
-                    }
+                    FileName = ofd.FileName;
+                    fs = new FileStream(ofd.FileName, FileMode.Open);
+                    binContent = Methods.ReadFull(fs);
+                    fs.Close();
+                    read = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error!");
+                    saveToolStripMenuItem.Enabled = false;
+                    saveAsToolStripMenuItem.Enabled = false;
+                    exportCoordinatesToolStripMenuItem1.Enabled = false;
+                    Form.ActiveForm.Text = "Font Editor";
+                }
 
 
-                    if (read)
-                    {
+                if (read)
+                {
                     try
                     {
                         fontFlags = null;
@@ -862,9 +863,8 @@ namespace TTG_Tools
                         MessageBox.Show("Unknown error: " + ex.Message);
                     }
                 }
+            }
         }
-
-}
 
         public int FindStartOfStringSomething(byte[] array, int offset, string string_something)
         {
@@ -1278,7 +1278,7 @@ namespace TTG_Tools
             {
                 dataGridViewWithTextures.Rows[e.RowIndex].Selected = true;
             }
-            if (e.Button == MouseButtons.Left && e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 // получаем координаты
                 Point pntCell = dataGridViewWithTextures.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true).Location;
@@ -1475,6 +1475,7 @@ namespace TTG_Tools
             if (e.RowIndex >= 0)
             {
                 dataGridViewWithCoord.Rows[e.RowIndex].Selected = true;
+                DrawCharacter(e.RowIndex);
             }
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
@@ -2040,7 +2041,7 @@ namespace TTG_Tools
         private void rbPS4Swizzle_CheckedChanged(object sender, EventArgs e)
         {
             MainMenu.settings.swizzlePS4 = true;
-            MainMenu.settings.swizzleNintendoSwitch = true;
+            MainMenu.settings.swizzleNintendoSwitch = false;
             Settings.SaveConfig(MainMenu.settings);
         }
 
@@ -2053,6 +2054,47 @@ namespace TTG_Tools
 
         private void convertArgb8888CB_CheckedChanged(object sender, EventArgs e)
         {
+        }
+
+        private void DrawCharacter(int rowIndex) //System.Drawing.Graphics g, Character character, int x, int y)
+        {
+            var selected = dataGridViewWithCoord.Rows[rowIndex].Cells;
+            int startX = int.Parse(selected[2].Value.ToString());
+            var startY = int.Parse(selected[4].Value.ToString());
+            var charW = int.Parse(selected[7].Value.ToString());
+            var charH = int.Parse(selected[8].Value.ToString());
+            var ddsNum = int.Parse(selected[6].Value.ToString());
+
+            Bitmap glyph = new Bitmap(charW, charH); ;
+
+            if (glyphPreview.Image != null)
+            {
+                glyphPreview.Image.Dispose();
+                glyphPreview.Image = null;
+            }
+
+            var test = SomeActions.ToImage(font.NewTex[ddsNum].Tex.Content);
+            if (test == null) return;
+            using (var g = System.Drawing.Graphics.FromImage(glyph))
+            {
+                g.DrawImage(test,
+                    new RectangleF(0, 0, charW, charH),
+                    new Rectangle(startX, startY, charW, charH),
+                    GraphicsUnit.Pixel);
+            }
+            glyphPreview.Image = glyph;
+            glyphPreview.ActualSize();
+
+            using (Pen pen = new Pen(Color.Red))
+            {
+                using (var e = System.Drawing.Graphics.FromImage(glyph))
+                {
+                    e.DrawRectangle(pen, glyphPreview.GetOffsetRectangle(0, 0, charW, charH));
+                }
+                    
+            }
+            glyphPreview.Image = glyph;
+            glyphPreview.ActualSize();
         }
     }
 }
